@@ -17,7 +17,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: 3.10
 
       - name: Install dependencies
         run: |
@@ -29,12 +29,9 @@ jobs:
           echo "🧪 Running unit tests (data + model validation)..."
           pytest -q --disable-warnings || true
         continue-on-error: true
-        # continue to generate report even if tests fail
 
       - name: Install CML
-        uses: iterative/setup-cml@v1
-        with:
-          python-version: '3.10'
+        run: npm install -g @dvcorg/cml
 
       - name: Generate CML Test Report
         run: |
@@ -54,7 +51,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if [ -n "${{ github.event.pull_request.number }}" ]; then
-            npx cml comment create --pr report/report.md
+            npx cml comment create --target=pr report/report.md
           else
             echo "Not a PR - skipping CML comment"
           fi
