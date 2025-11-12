@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "bubbly-upgrade-473704-a6",
+  "private_key_id": "a5b27061c3dd779147f89293551337cd31196af5",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDPTIMbaM0AJAFP\nqj4iNqIXdtSdKIVJvieD1qZpq9cSlqNmWwYsf5VqYyaR5u2/7QFl9fnHzCSvfKoL\nIGgsoBhNZbeIsdzF7w5f4MwgE3K79rLwGiZPe0RwXyOtBnujeWYYJUVA5gOCHmUp\nOcYMDrYJJMQNEShr8YXOlcjpXC4kvO6Aq3LEA/vhZH+/4LL79E79yS3jwka6YjsC\n9O+NpD8Yqjz4Z8x53o47O06orQJEXaDwD8RgYx0UzhaVnrj1eZUOMXzRDvLJRoXe\ny6ZWlQUFhHInItQlHdHnBuV15BwTDDZES2V7wVlYzYiuRPE2Eg9EcE+CtPtLbKlb\nJtzM1+HfAgMBAAECggEASnzGu4mb6AoIApU8wFR7SA0l9tbBli7iygfOQjhCDubc\nDgJ1JHYvvUulZ1XgZk+GahnJyBY9tGUKQPdDF43rTZxYJ6EpoGH2+1KuZnQ2jP3n\nbEkpLPQxMmOtURX8RVBw9AooaVp9NjsvxHGDDYAXvw9b9woMSUU+/G1sBRZfaklm\n+ReGFPAXk+FKmUk3K/YwFQEk1PBgIrRsIkgyiW1JbXyiwVXEkDjpx8eFLcdRIk7Y\n1UXUO2vbKHx3zcVp5PXS6Zl+GDMHfiEcW9sLTjkNu4bOdXPOKLQWjrJi9VAuJcz7\nd31sKcm5KcPkz8AVA3qAEXJpnN7a7WTTdpTzhLKY4QKBgQD8RfY3NfZZLzWTAL9+\nyI1WswP3Glbpnxwf/G02tbk/Jie2E8a7mbQ1lnVSdHsmF2VHbiy646rMynUepUhe\n6+xoR3NxMqOK9QuzLFxlxL2RqrZjs0/3wpDCbv+r4BmrlsIgGToXdptA80irgmdZ\nGdr+KQAIEITKnGaRhKWDdZ4RLwKBgQDSXHe72UzSoFhyVVt9LPDjn9J9PZK/kyGB\nPMXJSM3HvzhUfuSkDrs7+CwKx1Eap7QOij1LBoIgY6i/TG8CuoiZgML773YNNQHd\nZPa8MPSu3engGIxd80X2KeNxB70S8PGz7uXpZXSuksu/ROye0oa2W2it/ReXZozD\nlWfP4aIuUQKBgQCAadx7HizYGP/cZHUVxGCt0VIjZnT3VtaqMYQmZTp2uqVcOZTf\nyc3BuWTfJAvLx/z17081ks5OkIAtqVS9fLpKGpTY+j3lbfcWrW4bH5qfm5ZcCdqa\n859cWcQraVen0IXgcPbxGp7M4QoMw8R3xoGC/rvVXxM5T4Omby8RS726YQKBgCDE\n2L4Bdq8k3UJKO6s/MfMzdVWfHtoK8GAyeFkHp06jYgH/llxcExyfZzTyoZa2Yx0U\nucGTLPggrivGm1BggGDxJu6Z+djK1hSH4sukEKmg1grbqBoGiHJ1SgHUg8aMlApE\nf7og3NFI+sY71WRURTno+WCJGYCzL+BTyM0gR+RRAoGBANBf9KhS7MOwMxFG0+rf\nXAygyiXaC6hE3tFCBbMV1YghIKG1S9vjQzxPIJNmV+ESWnxkTEkmYP6N431QyXWL\nmvNRT0H29Jld5vOF6Y6cdCsB5MEyU+S817lQct2NKktZhE82k4hRWtr//kr8IJlU\nwEfOpExIDRYLMEW7GVsR5aSu\n-----END PRIVATE KEY-----\n",
+  "client_email": "github-actions-deployer-378@bubbly-upgrade-473704-a6.iam.gserviceaccount.com",
+  "client_id": "116819317782519927672",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/github-actions-deployer-378%40bubbly-upgrade-473704-a6.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
