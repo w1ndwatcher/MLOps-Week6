@@ -14,8 +14,7 @@ spec:
     spec:
       containers:
         - name: iris-api
-          image: us-central1-docker.pkg.dev/bubbly-upgrade-473704-a6/iris-repo/iris-api:latest
+          image: us-central1-docker.pkg.dev/bubbly-upgrade-473704-a6/my-repo/iris-api:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8000
-          # If your model file is large, consider mounting from a GCS bucket
