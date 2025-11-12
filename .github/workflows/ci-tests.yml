@@ -1,4 +1,5 @@
-name: CI - Tests & CML Report
+name: CI - Train, Test & CML Report
+
 on:
   push:
     branches: [ dev, main ]
@@ -8,8 +9,9 @@ on:
 jobs:
   tests:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up Python
@@ -17,40 +19,121 @@ jobs:
         with:
           python-version: 3.10
 
-      - name: Install deps
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pytest pandas scikit-learn joblib
-          # If you use mlflow in tests, install it too:
-          pip install mlflow
+          pip install pytest pandas scikit-learn joblib mlflow
+          pip install python-dotenv
 
-      - name: Run pytest
-        run: pytest -q --disable-warnings || true
+      - name: Train model and fetch best version from MLflow
+        env:
+          MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
+        run: |
+          echo "🏋️ Training model and fetching best version from MLflow..."
+          python train.py
+          echo "✅ Model training complete. Checking model file..."
+          test -f model/model.joblib && echo "Model file found." || (echo "❌ model.joblib missing!" && exit 1)
+
+      - name: Run tests with pytest
+        run: |
+          echo "🧪 Running unit tests..."
+          pytest -q --disable-warnings || true
         continue-on-error: true
-        # We continue on error because we still want to produce the CML report.
+        # Continue to generate report even if tests fail
 
       - name: Install CML
         uses: iterative/setup-cml@v1
         with:
           python-version: 3.10
 
-      - name: Generate simple report
+      - name: Generate CML Test Report
         run: |
           mkdir -p report
-          echo "## Test Report" > report/report.md
+          echo "## Test & Model Validation Report" > report/report.md
           echo "" >> report/report.md
+          echo "### 🏋️ Model Training" >> report/report.md
+          echo "Trained and fetched model from MLflow Registry." >> report/report.md
+          ls -lh model/ >> report/report.md
+          echo "" >> report/report.md
+          echo "### 🧪 Pytest Summary" >> report/report.md
           pytest -q --disable-warnings || true
-          # Append pytest summary to report (simple)
-          pytest -q --maxfail=1 --disable-warnings --last-failed --showlocals || true
-          echo "See pytest output in job logs." >> report/report.md
+          echo "" >> report/report.md
+          echo "See workflow logs for details." >> report/report.md
 
       - name: Post CML comment on PR (if any)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # If this run is for a pull_request, CML will attach a comment to the PR.
           if [ -n "${{ github.event.pull_request.number }}" ]; then
             cml-send-comment report/report.md --pr --md
           else
-            echo "Not a PR - skipping cml comment"
+            echo "Not a PR - skipping CML comment"
           fi
+
+      # Optional: Upload trained model as GitHub artifact for reference
+      - name: Upload trained model artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: trained-model
+          path: model/model.joblib
+
+
+
+
+# name: CI - Tests & CML Report
+# on:
+#   push:
+#     branches: [ dev, main ]
+#   pull_request:
+#     branches: [ main ]
+
+# jobs:
+#   tests:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout repo
+#         uses: actions/checkout@v4
+
+#       - name: Set up Python
+#         uses: actions/setup-python@v4
+#         with:
+#           python-version: 3.10
+
+#       - name: Install deps
+#         run: |
+#           python -m pip install --upgrade pip
+#           pip install pytest pandas scikit-learn joblib
+#           # If you use mlflow in tests, install it too:
+#           pip install mlflow
+
+#       - name: Run pytest
+#         run: pytest -q --disable-warnings || true
+#         continue-on-error: true
+#         # We continue on error because we still want to produce the CML report.
+
+#       - name: Install CML
+#         uses: iterative/setup-cml@v1
+#         with:
+#           python-version: 3.10
+
+#       - name: Generate simple report
+#         run: |
+#           mkdir -p report
+#           echo "## Test Report" > report/report.md
+#           echo "" >> report/report.md
+#           pytest -q --disable-warnings || true
+#           # Append pytest summary to report (simple)
+#           pytest -q --maxfail=1 --disable-warnings --last-failed --showlocals || true
+#           echo "See pytest output in job logs." >> report/report.md
+
+#       - name: Post CML comment on PR (if any)
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#         run: |
+#           # If this run is for a pull_request, CML will attach a comment to the PR.
+#           if [ -n "${{ github.event.pull_request.number }}" ]; then
+#             cml-send-comment report/report.md --pr --md
+#           else
+#             echo "Not a PR - skipping cml comment"
+#           fi
