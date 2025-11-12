@@ -54,7 +54,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if [ -n "${{ github.event.pull_request.number }}" ]; then
-            cml-send-comment report/report.md --pr --md
+            npx cml comment create --pr report/report.md
           else
             echo "Not a PR - skipping CML comment"
           fi
