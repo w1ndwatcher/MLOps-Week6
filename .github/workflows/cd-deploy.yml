@@ -1,43 +1,57 @@
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: iris-api
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: iris-api
-  template:
-    metadata:
-      labels:
-        app: iris-api
-    spec:
-      serviceAccountName: telemetry-access
-      containers:
-        - name: iris-api
-          image: us-central1-docker.pkg.dev/bubbly-upgrade-473704-a6/my-repo/iris-api:latest
-          imagePullPolicy: Always
-          ports:
-            - containerPort: 8000
+name: CD - Build → Push → Deploy to GKE
 
-          readinessProbe:
-            httpGet:
-              path: /ready_check
-              port: 8000
-            initialDelaySeconds: 10
-            periodSeconds: 10
+on:
+  push:
+    branches: [ main ]
 
-          livenessProbe:
-            httpGet:
-              path: /live_check
-              port: 8000
-            initialDelaySeconds: 15
-            periodSeconds: 20
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
 
-          resources:
-            requests:
-              cpu: "100m"
-              memory: "128Mi"
-            limits:
-              cpu: "500m"
-              memory: "512Mi"
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      # AUTHENTICATION
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: ${{ secrets.GCP_PROJECT }}
+
+      - name: Install GKE Auth Plugin
+        run: |
+          gcloud components install gke-gcloud-auth-plugin --quiet
+
+      - name: Configure Docker for Artifact Registry
+        run: gcloud auth configure-docker ${{ secrets.ARTIFACT_REGISTRY }} --quiet
+
+      - name: Build Docker image
+        run: |
+          IMAGE_URI="${{ secrets.ARTIFACT_REGISTRY }}/${{ secrets.GCP_PROJECT }}/${{ secrets.ARTIFACT_REPOSITORY }}/${{ secrets.IMAGE_NAME }}:${{ github.sha }}"
+          docker build -t "$IMAGE_URI" .
+          echo "IMAGE_URI=$IMAGE_URI" >> $GITHUB_ENV
+
+      - name: Push Docker image
+        run: docker push $IMAGE_URI
+
+      - name: Get GKE credentials
+        run: |
+          gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER }} \
+            --zone ${{ secrets.GKE_ZONE }} \
+            --project ${{ secrets.GCP_PROJECT }}
+
+      - name: Apply manifests
+        run: |
+          kubectl apply -f k8s/deployment.yaml
+          kubectl apply -f k8s/service.yaml
+          kubectl apply -f k8s/hpa.yaml
+
+      - name: Rollout update
+        run: |
+          kubectl set image deployment/iris-api iris-api=$IMAGE_URI --record
+          kubectl rollout status deployment/iris-api --timeout=180s
