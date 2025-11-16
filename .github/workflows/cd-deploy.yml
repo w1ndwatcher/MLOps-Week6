@@ -12,7 +12,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      # NEW REQUIRED AUTH STEP
+      # AUTHENTICATION
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
@@ -23,9 +23,14 @@ jobs:
         with:
           project_id: ${{ secrets.GCP_PROJECT }}
 
-      - name: Configure Docker for Artifact Registry
+      # FIX: INSTALL GKE AUTH PLUGIN
+      - name: Install GKE Auth Plugin
         run: |
-          gcloud auth configure-docker ${{ secrets.ARTIFACT_REGISTRY }} --quiet
+          sudo apt-get update
+          sudo apt-get install -y google-cloud-sdk-gke-gcloud-auth-plugin
+
+      - name: Configure Docker for Artifact Registry
+        run: gcloud auth configure-docker ${{ secrets.ARTIFACT_REGISTRY }} --quiet
 
       - name: Build Docker image
         run: |
@@ -48,7 +53,7 @@ jobs:
           kubectl apply -f service.yaml
           kubectl apply -f hpa.yaml
 
-      - name: Rollout new image
+      - name: Rollout update
         run: |
           kubectl set image deployment/iris-api iris-api=$IMAGE_URI --record
           kubectl rollout status deployment/iris-api --timeout=300s
