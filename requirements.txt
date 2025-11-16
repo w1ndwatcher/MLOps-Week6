@@ -5,3 +5,5 @@ joblib
 numpy
 pandas
 mlflow
+# Exporter for Google Cloud
+opentelemetry-exporter-gcp-trace
