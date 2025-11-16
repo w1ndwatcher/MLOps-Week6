@@ -24,15 +24,15 @@ spec:
             httpGet:
               path: /ready_check
               port: 8000
-            initialDelaySeconds: 10
-            periodSeconds: 10
+            initialDelaySeconds: 5
+            periodSeconds: 5
 
           livenessProbe:
             httpGet:
               path: /live_check
               port: 8000
-            initialDelaySeconds: 15
-            periodSeconds: 20
+            initialDelaySeconds: 10
+            periodSeconds: 10
 
           resources:
             requests:
