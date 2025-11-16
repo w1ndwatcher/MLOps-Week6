@@ -15,7 +15,7 @@ spec:
       serviceAccountName: telemetry-access
       containers:
         - name: iris-api
-          image: us-central1-docker.pkg.dev/bubbly-upgrade-473704-a6/my-repo/iris-api:PLACEHOLDER
+          image: us-central1-docker.pkg.dev/bubbly-upgrade-473704-a6/my-repo/iris-api:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8000
