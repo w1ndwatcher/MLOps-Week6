@@ -12,7 +12,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      # AUTHENTICATION
+      # AUTHENTICATE TO GOOGLE CLOUD
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
@@ -28,8 +28,10 @@ jobs:
           gcloud components install gke-gcloud-auth-plugin --quiet
 
       - name: Configure Docker for Artifact Registry
-        run: gcloud auth configure-docker ${{ secrets.ARTIFACT_REGISTRY }} --quiet
+        run: |
+          gcloud auth configure-docker ${{ secrets.ARTIFACT_REGISTRY }} --quiet
 
+      # BUILD DOCKER IMAGE
       - name: Build Docker image
         run: |
           IMAGE_URI="${{ secrets.ARTIFACT_REGISTRY }}/${{ secrets.GCP_PROJECT }}/${{ secrets.ARTIFACT_REPOSITORY }}/${{ secrets.IMAGE_NAME }}:${{ github.sha }}"
@@ -39,6 +41,12 @@ jobs:
       - name: Push Docker image
         run: docker push $IMAGE_URI
 
+      # PATCH deployment.yaml WITH NEW IMAGE
+      - name: Patch deployment YAML with new image
+        run: |
+          sed -i "s|IMAGE_PLACEHOLDER|$IMAGE_URI|g" k8s/deployment.yaml
+
+      # DEPLOY TO GKE
       - name: Get GKE credentials
         run: |
           gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER }} \
@@ -51,7 +59,6 @@ jobs:
           kubectl apply -f k8s/service.yaml
           kubectl apply -f k8s/hpa.yaml
 
-      - name: Rollout update
+      - name: Wait for rollout
         run: |
-          kubectl set image deployment/iris-api iris-api=$IMAGE_URI --record
           kubectl rollout status deployment/iris-api --timeout=300s
