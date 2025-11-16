@@ -12,6 +12,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
+      # AUTHENTICATION
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
