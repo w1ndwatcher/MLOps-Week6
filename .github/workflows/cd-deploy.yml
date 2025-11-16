@@ -12,7 +12,6 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      # AUTHENTICATION
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
@@ -23,11 +22,9 @@ jobs:
         with:
           project_id: ${{ secrets.GCP_PROJECT }}
 
-      # FIX: INSTALL GKE AUTH PLUGIN
       - name: Install GKE Auth Plugin
         run: |
-          sudo apt-get update
-          sudo apt-get install -y google-cloud-sdk-gke-gcloud-auth-plugin
+          gcloud components install gke-gcloud-auth-plugin --quiet
 
       - name: Configure Docker for Artifact Registry
         run: gcloud auth configure-docker ${{ secrets.ARTIFACT_REGISTRY }} --quiet
