@@ -54,4 +54,4 @@ jobs:
       - name: Rollout update
         run: |
           kubectl set image deployment/iris-api iris-api=$IMAGE_URI --record
-          kubectl rollout status deployment/iris-api --timeout=180s
+          kubectl rollout status deployment/iris-api --timeout=300s
