@@ -30,7 +30,7 @@ jobs:
           echo "IMAGE_URI=$IMAGE_URI" >> $GITHUB_ENV
           echo "✅ Built image: $IMAGE_URI"
 
-      - name: Push to Artifact Registry
+      - name: Push Docker image
         run: |
           echo "📤 Pushing Docker image..."
           docker push $IMAGE_URI
@@ -41,8 +41,19 @@ jobs:
             --zone ${{ secrets.GKE_ZONE }} \
             --project ${{ secrets.GCP_PROJECT }}
 
-      - name: Deploy to GKE
+      - name: Apply manifests (Deployment, Service, HPA)
         run: |
-          echo "🚀 Deploying image to GKE..."
+          kubectl apply -f deployment.yaml
+          kubectl apply -f service.yaml
+          kubectl apply -f hpa.yaml
+
+      - name: Update Deployment to use new image
+        run: |
+          echo "🚀 Updating container image..."
           kubectl set image deployment/iris-api iris-api=$IMAGE_URI --record
-          kubectl rollout status deployment/iris-api --timeout=120s
+
+      - name: Wait for rollout to finish
+        run: |
+          echo "⏳ Waiting for rollout..."
+          kubectl rollout status deployment/iris-api --timeout=300s
+          echo "🎉 Deployment successful!"

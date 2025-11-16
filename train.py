@@ -10,12 +10,12 @@ from mlflow.tracking import MlflowClient
 import os
 
 #  Configuration
-MODEL_TRACKING_URI = "http://35.225.19.3:8100/"
-MODEL_NAME = "IRIS-classifier-dt-w6"
+MODEL_TRACKING_URI = "http://127.0.0.1:8100/"
+MODEL_NAME = "IRIS-classifier-dt-w8"
 LOCAL_MODEL_PATH = "model/model.joblib"
 
 mlflow.set_tracking_uri(MODEL_TRACKING_URI)
-mlflow.set_experiment("IRIS Classifier: Mlflow Assignment Week 6")
+mlflow.set_experiment("IRIS Classifier: Mlflow Assignment Week 8")
 
 # load the dataset
 print("Loading data...")
